@@ -1,6 +1,6 @@
 #include "SSBOMesh.h"
 
-SSBOMesh::SSBOMesh(std::vector<Face> faces) {
+SSBOMesh::SSBOMesh(const std::vector<Face>& faces) {
     for (const Face& face : faces) {
 
         glm::vec3 deltaPosition;

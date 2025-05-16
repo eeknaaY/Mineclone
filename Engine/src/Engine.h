@@ -2,7 +2,7 @@
 
 #include "Camera.h"
 #include "GraphicsWindow.h"
-#include "Shaders/Shader.h"
+#include "Shader.h"
 #include "Keybind.h"
 #include "SSBOMesh.h"
 

@@ -14,7 +14,7 @@ enum class Direction {
 };
 
 struct Vertex {
-	Vertex(glm::vec3 position, glm::vec2 size, Direction faceDirection) {
+	Vertex(const glm::vec3& position, const glm::vec2& size, Direction faceDirection) {
 		this->position = position;
 		this->size = size;
 		this->faceNormalIndex = (int)faceDirection;

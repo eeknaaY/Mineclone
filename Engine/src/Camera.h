@@ -8,10 +8,10 @@
 class Camera {
 
 public:
-	Camera(std::shared_ptr<GraphicsWindow> window);
+	Camera(std::weak_ptr<GraphicsWindow> window);
 
 	void setFOV(float FOV);
-	void setFrustumRange(glm::vec2 FrustumRanges);
+	void setFrustumRange(const glm::vec2& FrustumRanges);
 	void updateProjectionMatrix();
 	void updateViewMatrix();
 
@@ -21,9 +21,9 @@ public:
 	void update();
 
 private:
-	std::shared_ptr<GraphicsWindow> m_Window;
+	std::weak_ptr<GraphicsWindow> m_Window;
 
-	float m_MoveSpeed = .05f;
+	float m_MoveSpeed = .3f;
 	float m_MouseSensitivity = 0.1f;
 	float m_FOV = 70.f;
 	glm::vec2 m_FrustumRanges = glm::vec2(0.1f, 700.f);

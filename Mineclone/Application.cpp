@@ -7,17 +7,25 @@ int main() {
 
 	std::vector<SSBOMesh::Face> faces = std::vector<SSBOMesh::Face>{};
 
-	faces.push_back(SSBOMesh::Face(glm::vec3(-0.5, 0.5, 1), glm::vec2(1, 1), Direction::NORTH));
-	faces.push_back(SSBOMesh::Face(glm::vec3(-0.5, 0.5, 0), glm::vec2(1, 1), Direction::SOUTH));
-	faces.push_back(SSBOMesh::Face(glm::vec3(-1, 0.5, 0.5), glm::vec2(1, 1), Direction::EAST));
-	faces.push_back(SSBOMesh::Face(glm::vec3(0, 0.5, 0.5), glm::vec2(1, 1), Direction::WEST));
-	faces.push_back(SSBOMesh::Face(glm::vec3(0.5, 1, 0.5), glm::vec2(1, 1), Direction::UP));
-	faces.push_back(SSBOMesh::Face(glm::vec3(0.5, 0, 0.5), glm::vec2(1, 1), Direction::DOWN));
+	enum Actions {
+		STOP_ENGINE
+	};
+
+	Engine::Keybind::SetKeybind(GLFW_KEY_ESCAPE, Actions::STOP_ENGINE);
+	Engine::Keybind::SetAction(STOP_ENGINE, []() { Engine::Stop(); });
+
+	faces.push_back(SSBOMesh::Face(glm::vec3(0.25, 1, 0.5), glm::vec2(0.5, 2), Direction::NORTH));
+	faces.push_back(SSBOMesh::Face(glm::vec3(0.25, 1, 0), glm::vec2(0.5, 2), Direction::SOUTH));
+	faces.push_back(SSBOMesh::Face(glm::vec3(0, 1, 0.25), glm::vec2(0.5, 2), Direction::EAST));
+	faces.push_back(SSBOMesh::Face(glm::vec3(0.5, 1, 0.25), glm::vec2(0.5, 2), Direction::WEST));
+	faces.push_back(SSBOMesh::Face(glm::vec3(0.25, 2, 0.25), glm::vec2(0.5, 0.5), Direction::UP));
+	faces.push_back(SSBOMesh::Face(glm::vec3(0.25, 0, 0.25), glm::vec2(0.5, 0.5), Direction::DOWN));
 
 	SSBOMesh triangle = SSBOMesh(faces);
 
-
-	Shader mainShader("D:/VisualStudio/Mineclone/Engine/src/Shaders/mainShader.vs", "D:/VisualStudio/Mineclone/Engine/src/Shaders/mainShader.fs");
+	// Shaders should probably be inside the mineclone project, not the engine
+	// Could also make standard shaders, and you override them on the project
+	Shader mainShader("src/Shaders/mainShader.vs", "src/Shaders/mainShader.fs");
 	mainShader.use();
 	mainShader.setMat4("ProjectionMatrix", Engine::MainCamera->getProjectionMatrix());
 

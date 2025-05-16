@@ -5,18 +5,19 @@
 class SSBOMesh : public Mesh {
 public:
 	struct Face {
-		Face(glm::vec3 position, glm::vec2 size, Direction direction) {
+		Face(const glm::vec3& position, const glm::vec2& size, Direction direction) {
 			this->position = position;
 			this->size = size;
 			this->direction = direction;
 		}
 
+		// Center position of the face
 		glm::vec3 position;
 		glm::vec2 size;
 		Direction direction;
 	};
 
-	SSBOMesh(std::vector<Face> faces);
+	SSBOMesh(const std::vector<Face>& faces);
 
 	void draw() override;
 	void bind() override;

@@ -7,21 +7,16 @@
 
 namespace Engine {
 
-class Keybind {
-public:
-	enum Actions {
-		STOP_ENGINE,
-		BLANK
-	};
-	
-	static void SetAction(Actions action, std::function<void()> function);
-	static void PerformAction(int GLFW_KEY);
-	static void SetKeybind(int GLFW_KEY, Actions action);
-	static void SetStartUpKeybinds();
+	class Keybind {
+	public:
+		static void SetAction(int action, std::function<void()> function);
+		static void PerformAction(int GLFW_KEY);
+		static void SetKeybind(int GLFW_KEY, int action);
+		static void SetStartUpKeybinds();
 
-private:
-	static std::unordered_map <int, Actions> m_KeyToActionMap;
-	static std::unordered_map <Actions, std::function<void()>> m_ActionToFunctionMap;
-};
+	private:
+		static std::unordered_map <int, int> m_KeyToActionMap;
+		static std::unordered_map <int, std::function<void()>> m_ActionToFunctionMap;
+	};
 
 }

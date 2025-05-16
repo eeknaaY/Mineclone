@@ -180,7 +180,7 @@
     <ClInclude Include="src\GraphicsWindow.h" />
     <ClInclude Include="src\Keybind.h" />
     <ClInclude Include="src\Mesh.h" />
-    <ClInclude Include="src\shaders\Shader.h" />
+    <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\SSBOMesh.h" />
   </ItemGroup>
   <ItemGroup>
@@ -199,9 +199,6 @@
     <ClCompile Include="src\GraphicsWindow.cpp" />
     <ClCompile Include="src\Keybind.cpp" />
     <ClCompile Include="src\SSBOMesh.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="src\shaders\mainShader.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

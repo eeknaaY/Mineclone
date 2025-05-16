@@ -1,4 +1,4 @@
-#version 430 core
+#version 460 core
 
 struct VertexData{
 	vec3 position;
@@ -7,6 +7,8 @@ struct VertexData{
 	vec2 size;
 	vec2 padding2;
 };
+
+flat out VertexData vertexData; 
 
 layout(std430, binding = 0) readonly buffer vertexPullBuffer 
 {
@@ -38,8 +40,8 @@ vec3 rotationDegrees[6] = vec3[6](
 	vec3(0, 180, 0), // South
 	vec3(0, -90, 0), // West
 	vec3(0, 90, 0), // East
-	vec3(180, 0, 90), // Up
-	vec3(180, 0, -90) // DOwn
+	vec3(90, 0, 90), // Up
+	vec3(90, 0, -90) // DOwn
 );
 
 vec3 faceNormals[6] = vec3[6](
@@ -52,7 +54,6 @@ vec3 faceNormals[6] = vec3[6](
 );
 
 int indices[6] = {0, 1, 2, 0, 2, 3};
-int invertedIndices[6] = {0, 2, 1, 0, 3, 2};
 
 uniform mat4 ProjectionMatrix;
 uniform mat4 ViewMatrix;
@@ -63,11 +64,12 @@ void main()
 	int vertexIndex = gl_VertexID / 6;
   	int faceIndex = gl_VertexID % 6;
 
-	VertexData vertexData = AllVertexData[vertexIndex];
+	VertexData currentVertexData = AllVertexData[vertexIndex];
+	vertexData = currentVertexData;
 
 	vec3 addedPosition = facePositions[indices[faceIndex]];;
-	addedPosition = vec3(addedPosition.x * vertexData.size.x, addedPosition.y * vertexData.size.y, 0);
-	vertexData.position += rotateVector(addedPosition, rotationDegrees[vertexData.faceNormalIndex]);
+	addedPosition = vec3(addedPosition.x * currentVertexData.size.x, addedPosition.y * currentVertexData.size.y, 0);
+	currentVertexData.position += rotateVector(addedPosition, rotationDegrees[currentVertexData.faceNormalIndex]);
 
-	gl_Position = ProjectionMatrix * ViewMatrix * TransformMatrix * vec4(vertexData.position, 1.0);
+	gl_Position = ProjectionMatrix * ViewMatrix * TransformMatrix * vec4(currentVertexData.position, 1.0);
 }

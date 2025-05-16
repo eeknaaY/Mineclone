@@ -24,7 +24,7 @@
     <ClInclude Include="src\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\shaders\Shader.h">
+    <ClInclude Include="src\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Camera.h">
@@ -56,8 +56,5 @@
     <ClCompile Include="src\SSBOMesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="src\shaders\mainShader.vs" />
   </ItemGroup>
 </Project>
