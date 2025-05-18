@@ -1,38 +1,20 @@
 #include "SSBOMesh.h"
 
+#include <iostream>
+
 SSBOMesh::SSBOMesh(const std::vector<Face>& faces) {
     for (const Face& face : faces) {
-
-        glm::vec3 deltaPosition;
-        switch (face.direction) {
-            case Direction::NORTH:
-                deltaPosition = glm::vec3(-face.size.x / 2, -face.size.y / 2, 0);
-                break;
-            case Direction::SOUTH:
-                deltaPosition = glm::vec3(face.size.x / 2, -face.size.y / 2, 0);
-                break;
-            case Direction::EAST:
-                deltaPosition = glm::vec3(0, -face.size.y / 2, -face.size.x / 2);
-                break;
-            case Direction::WEST:
-                deltaPosition = glm::vec3(0, -face.size.y / 2, face.size.x / 2);
-                break;
-            case Direction::UP:
-                deltaPosition = glm::vec3(-face.size.x / 2, 0, -face.size.y / 2);
-                break;
-            case Direction::DOWN:
-                deltaPosition = glm::vec3(-face.size.x / 2, 0, face.size.y / 2);
-                break;
-        }
-
-
-        Vertex vertex = Vertex(face.position + deltaPosition, face.size, face.direction);
-        m_Vertices.push_back(vertex);
+        append(face);
     }
 }
 
 void SSBOMesh::draw() {
-    if (m_VAO == 0) this->bind();
+    if (m_VAO == 0) {
+#ifdef _DEBUG
+        std::cout << "Trying to draw SSBO-Mesh that has not been bound.\n";
+#endif // _DEBUG
+        return;
+    }
 
     glBindVertexArray(m_VAO);
 
@@ -56,4 +38,32 @@ void SSBOMesh::bind() {
     glBufferData(GL_SHADER_STORAGE_BUFFER, m_Vertices.size() * sizeof(Vertex), m_Vertices.data(), GL_STATIC_DRAW);
 
     glBindVertexArray(0);
+}
+
+void SSBOMesh::append(const Face& face) {
+    glm::vec3 deltaPosition;
+    switch (face.direction) {
+    case Direction::NORTH:
+        deltaPosition = glm::vec3(-face.size.x / 2, -face.size.y / 2, 0);
+        break;
+    case Direction::SOUTH:
+        deltaPosition = glm::vec3(face.size.x / 2, -face.size.y / 2, 0);
+        break;
+    case Direction::EAST:
+        deltaPosition = glm::vec3(0, -face.size.y / 2, -face.size.x / 2);
+        break;
+    case Direction::WEST:
+        deltaPosition = glm::vec3(0, -face.size.y / 2, face.size.x / 2);
+        break;
+    case Direction::UP:
+        deltaPosition = glm::vec3(-face.size.x / 2, 0, -face.size.y / 2);
+        break;
+    case Direction::DOWN:
+        deltaPosition = glm::vec3(-face.size.x / 2, 0, face.size.y / 2);
+        break;
+    }
+
+
+    Vertex vertex = Vertex(face.position + deltaPosition, face.size, face.direction);
+    m_Vertices.push_back(vertex);
 }

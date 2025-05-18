@@ -17,10 +17,12 @@ public:
 		Direction direction;
 	};
 
+	SSBOMesh() = default;
 	SSBOMesh(const std::vector<Face>& faces);
 
 	void draw() override;
 	void bind() override;
+	void append(const Face& face);
 
 private:
 	unsigned int m_SSBO = 0;

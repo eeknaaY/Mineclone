@@ -6,6 +6,7 @@ namespace Engine {
 	std::shared_ptr<GraphicsWindow> MainWindow = nullptr;
 
 	GraphicsWindow& Initialize() {
+
 		MainWindow = std::shared_ptr<GraphicsWindow>(new GraphicsWindow());
 		MainCamera = std::shared_ptr<Camera>(new Camera(MainWindow));
 
