@@ -37,6 +37,7 @@ class Mesh {
 public:
 	virtual void draw() = 0;
 	virtual void bind() = 0;
+	virtual void clear() = 0;
 
 	static void ToggleWireframe() {
 		if (m_RenderingWireframe) {

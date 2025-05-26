@@ -67,3 +67,7 @@ void SSBOMesh::append(const Face& face) {
     Vertex vertex = Vertex(face.position + deltaPosition, face.size, face.direction);
     m_Vertices.push_back(vertex);
 }
+
+void SSBOMesh::clear() {
+    m_Vertices.clear();
+}

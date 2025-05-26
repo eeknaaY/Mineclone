@@ -66,7 +66,7 @@ glm::vec2 GraphicsWindow::getMousePosition() {
 	GLdouble xPos, yPos;
 	glfwGetCursorPos(m_GLFWwindow, &xPos, &yPos);
 
-	return glm::vec2(xPos, yPos);
+	return {xPos, yPos};
 }
 
 void GraphicsWindow::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {

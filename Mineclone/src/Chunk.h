@@ -10,6 +10,7 @@
 class Chunk {
 public:
 	Chunk(const glm::ivec3& position);
+	Chunk(const glm::ivec3& position, int defaultVoxelValue);
 	~Chunk();
 	
 	static const int m_ChunkSize = 32;
@@ -19,15 +20,16 @@ public:
 	
 	void draw(const Shader& shader);
 	void updateMesh();
+	void bindMesh();
 
 private:
 	glm::ivec3 m_Position;
 
 	// Iterate through X-Y-Z (Z furthest out)
-	VoxelStorage m_VoxelData = VoxelStorage(m_ChunkSize);
+	VoxelStorage m_VoxelData;
 
 	SSBOMesh m_Mesh;
 	// Meshing functions
-	void createBlockFace(const glm::ivec3& position, Direction direction);
+	void createBlockFace(const SSBOMesh::Face& face);
 	glm::ivec3 getDirectionPosition(const glm::ivec3& position, Direction direction);
 };

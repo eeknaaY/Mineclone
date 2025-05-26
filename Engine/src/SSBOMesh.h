@@ -22,6 +22,7 @@ public:
 
 	void draw() override;
 	void bind() override;
+	void clear() override;
 	void append(const Face& face);
 
 private:

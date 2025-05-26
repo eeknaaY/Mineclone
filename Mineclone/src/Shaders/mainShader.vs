@@ -68,7 +68,8 @@ void main()
 	vertexData = currentVertexData;
 
 	vec3 addedPosition = facePositions[indices[faceIndex]];;
-	addedPosition = vec3(addedPosition.x * currentVertexData.size.x, addedPosition.y * currentVertexData.size.y, 0);
+	if (currentVertexData.faceNormalIndex < 4) addedPosition = vec3(addedPosition.x * currentVertexData.size.x, addedPosition.y * currentVertexData.size.y, 0);
+	if (currentVertexData.faceNormalIndex >= 4) addedPosition = vec3(addedPosition.x * currentVertexData.size.y, addedPosition.y * currentVertexData.size.x, 0);
 	currentVertexData.position += rotateVector(addedPosition, rotationDegrees[currentVertexData.faceNormalIndex]);
 
 	gl_Position = ProjectionMatrix * ViewMatrix * TransformMatrix * vec4(currentVertexData.position, 1.0);

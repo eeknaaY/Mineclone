@@ -23,26 +23,36 @@ int main() {
 	mainShader.use();
 	mainShader.setMat4("ProjectionMatrix", Engine::MainCamera->getProjectionMatrix());
 
-	Chunk test(glm::ivec3(0, 0, 0));
-	for (int z = 0; z < 32; z++) {
-		for (int y = 0; y < 32; y++) {
-			for (int x = 0; x < 32; x++) {
-				if ((x + y - z) % (x + 1) == 0) continue;
-				test.setBlock(glm::ivec3(x, y, z), Voxel(1, VoxelType::OPAQUE));
-			}
-		}
-	}
-	test.updateMesh();
+	Chunk test(glm::ivec3(0, 0, 0), 1);
+	Chunk test2(glm::ivec3(0, 0, 1), 1);
+	Chunk test3(glm::ivec3(1, 0, 0), 1);
+	Chunk test4(glm::ivec3(0, 0, -1), 1);
 
+
+	//for (int n = 0; n < 10000; n++) test.updateMesh();
+	test.updateMesh();
+	test.bindMesh();
+
+	test2.updateMesh();
+	test2.bindMesh();
+
+	test3.updateMesh();
+	test3.bindMesh();
+
+	test4.updateMesh();
+	test4.bindMesh();
 	while (Engine::MainWindow->isActive()) {
 		/* Main Loop Here */
 		mainShader.setMat4("ViewMatrix", Engine::MainCamera->getViewMatrix());
-		mainShader.setMat4("TransformMatrix", glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0)));
 		test.draw(mainShader);
+		test2.draw(mainShader);
+		test3.draw(mainShader);
+		test4.draw(mainShader);
+
 
 		// Scuffed reload shader for now, make it organized later.
 		if (glfwGetKey(Engine::MainWindow->getRawWindow(), GLFW_KEY_R) == GLFW_PRESS) {
-			mainShader = Shader("D:/VisualStudio/Mineclone/Engine/src/Shaders/mainShader.vs", "D:/VisualStudio/Mineclone/Engine/src/Shaders/mainShader.fs");
+			mainShader = Shader("../../Mineclone/src/Shaders/mainShader.vs", "../../Mineclone/src/Shaders/mainShader.fs");
 			mainShader.use();
 			mainShader.setMat4("ProjectionMatrix", Engine::MainCamera->getProjectionMatrix());
 			mainShader.setMat4("ViewMatrix", Engine::MainCamera->getViewMatrix());
