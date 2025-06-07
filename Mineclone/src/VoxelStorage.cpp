@@ -6,17 +6,17 @@ VoxelStorage::VoxelStorage(int storageSize, int dimensions, int defaultValue) {
 	this->m_StorageSize = storageSize;
 	this->m_DimensionCount = dimensions;
 
-	// Initialize storage with air voxels
+	// Initialize storage
 	Voxel defaultVoxel = Voxel(defaultValue, VoxelType::TRANSPARENT);
-	m_Storage = std::vector<Voxel>(pow(storageSize, dimensions), defaultVoxel);
+	m_Storage = std::vector<Voxel>((int)pow(storageSize, dimensions), defaultVoxel);
 }
 
-void VoxelStorage::setVoxel(const glm::ivec3& position, Voxel voxel) {
+void VoxelStorage::setVoxel(const glm::ivec3& position, const Voxel& voxel) {
 	m_Storage[position.x + position.y * m_StorageSize + position.z * m_StorageSize * m_StorageSize] = voxel;
 }
 
 Voxel VoxelStorage::getVoxel(const glm::ivec3& position) const {
-	Voxel airVoxel = Voxel(0, VoxelType::TRANSPARENT);
+	static Voxel airVoxel = Voxel(0, VoxelType::TRANSPARENT);
 
 	if (position.x < 0 || position.x > m_StorageSize) return airVoxel;
 	if (position.y < 0 || position.y > m_StorageSize) return airVoxel;

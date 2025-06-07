@@ -30,7 +30,7 @@
     <ClInclude Include="src\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Keybind.h">
+    <ClInclude Include="src\ActionHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\SSBOMesh.h">
@@ -50,7 +50,7 @@
     <ClCompile Include="src\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Keybind.cpp">
+    <ClCompile Include="src\ActionHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\SSBOMesh.cpp">

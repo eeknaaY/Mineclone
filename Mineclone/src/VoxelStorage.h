@@ -12,7 +12,7 @@ public:
 	// Stores the data as a cube.
 	VoxelStorage() = default;
 	VoxelStorage(int storageSize, int dimensions, int defaultVoxel = m_DefaultVoxelValue);
-	void setVoxel(const glm::ivec3& position, Voxel voxel);
+	void setVoxel(const glm::ivec3& position, const Voxel& voxel);
 	Voxel getVoxel(const glm::ivec3& position) const;
 
 	const static int BitsetValue = 64;

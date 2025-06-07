@@ -1,16 +1,20 @@
 #include "Chunk.h"
 
+#include "ChunkManager.h"
+
 #include <stdexcept>
 #include <chrono>
 
+
 Chunk::Chunk(const glm::ivec3& position) {
 	m_Position = position;
-	m_VoxelData = VoxelStorage(m_ChunkSize, 3);
+	m_VoxelData = VoxelStorage(m_ChunkSize, 3, 0);
 }
 
-Chunk::Chunk(const glm::ivec3& position, int defaultVoxelValue) {
+Chunk::Chunk(const glm::ivec3& position, ChunkManager* chunkManager, int defaultVoxelValue) {
 	m_Position = position;
 	m_VoxelData = VoxelStorage(m_ChunkSize, 3, defaultVoxelValue);
+	m_ChunkManager = chunkManager;
 }
 
 Chunk::~Chunk() {
@@ -23,6 +27,10 @@ void Chunk::setBlock(const glm::ivec3& position, const Voxel& voxel) {
 
 Voxel Chunk::getBlock(const glm::ivec3& position) {
 	return m_VoxelData.getVoxel(position);
+}
+
+glm::ivec3 Chunk::getPosition() const {
+	return m_Position;
 }
 
 glm::ivec3 Chunk::getDirectionPosition(const glm::ivec3& position, Direction direction) {
@@ -94,22 +102,53 @@ void Chunk::updateMesh() {
 	VoxelStorage allVoxelData = VoxelStorage(CSWP, 3);
 
 	// Set the data into the storage.
-	// TODO: Set neighboring chunks data into it.
 	for (int z = 0; z < m_ChunkSize; z++) {
 		for (int y = 0; y < m_ChunkSize; y++) {
 			for (int x = 0; x < m_ChunkSize; x++) {
-				allVoxelData.setVoxel(glm::vec3(x + 1, y + 1, z + 1), m_VoxelData.getVoxel(glm::vec3(x, y, z)));
+				Voxel voxelData = getBlock(glm::vec3((x + m_ChunkSize) % m_ChunkSize, (y + m_ChunkSize) % m_ChunkSize, (z + m_ChunkSize) % m_ChunkSize));
+
+				allVoxelData.setVoxel(glm::vec3(x + 1, y + 1, z + 1), voxelData);
+			}
+		}
+	}
+
+	for (unsigned int direction = (int)Direction::NORTH; direction <= (int)Direction::DOWN; direction <<= 1) {
+		glm::ivec3 offset;
+		switch ((Direction)direction) {
+		case Direction::NORTH: offset = glm::ivec3(0, 0, 1); break;
+		case Direction::SOUTH: offset = glm::ivec3(0, 0, -1); break;
+		case Direction::UP:    offset = glm::ivec3(0, 1, 0); break;
+		case Direction::DOWN:  offset = glm::ivec3(0, -1, 0); break;
+		case Direction::WEST:  offset = glm::ivec3(1, 0, 0); break;
+		case Direction::EAST:  offset = glm::ivec3(-1, 0, 0); break;
+		}
+
+		Chunk* neighborChunk = m_ChunkManager->getChunk(m_Position + offset);
+
+		for (int y = 0; y < m_ChunkSize; y++) {
+			for (int x = 0; x < m_ChunkSize; x++) {
+				
+				int chunkDepth = (direction & ((int)Direction::SOUTH | (int)Direction::DOWN | (int)Direction::EAST)) > 0 ? m_ChunkSize - 1 : 0;
+				Voxel targetVoxel = Voxel(0, VoxelType::OPAQUE);
+				if (neighborChunk) {
+					glm::ivec3 getPosition = getDirectionPosition(glm::ivec3(x, y, chunkDepth), (Direction)direction);
+					targetVoxel = neighborChunk->getBlock(getPosition);
+				}	
+
+				glm::ivec3 setPosition = getDirectionPosition(glm::ivec3(x + 1, y + 1, chunkDepth == 0 ? CSWP - 1 : 0), (Direction)direction);
+				allVoxelData.setVoxel(setPosition, targetVoxel);
 			}
 		}
 	}
 
 	// Storage to keep track of where to build faces.
-	VoxelStorage voxelFaces = VoxelStorage(CSWP, 3);
+	VoxelStorage voxelFaces = VoxelStorage(m_ChunkSize, 3);
 
+	// Doing every other direction since the bitdata can be reused for the opposite direction.
 	for (unsigned int direction = (int)Direction::NORTH; direction <= (int)Direction::DOWN; direction <<= 2) {
 
-		for (int y = 0; y < CSWP; y++) {
-			for (int x = 0; x < CSWP; x++) {
+		for (int y = 1; y < m_ChunkSize + 1; y++) {
+			for (int x = 1; x < m_ChunkSize + 1; x++) {
 				// Generate bit data
 				uint64_t bitData = allVoxelData.getVoxelRow(glm::ivec2(x, y), (Direction)direction);
 				uint64_t copiedBitData = bitData;
@@ -118,20 +157,20 @@ void Chunk::updateMesh() {
 				copiedBitData &= ~(copiedBitData << 1);
 
 				// Iterate through the bitdata
-				for (int itrCount = 0; itrCount < CSWP; itrCount++) {
-					glm::ivec3 position = getDirectionPosition(glm::ivec3(x, y, itrCount), (Direction)direction);
+				for (int itrCount = 1; itrCount < m_ChunkSize + 1; itrCount++) {
+					glm::ivec3 position = getDirectionPosition(glm::ivec3(x - 1, y - 1, itrCount - 1), (Direction)direction);
 
 					if ((bitData >> itrCount) & 1) {
 						Voxel currentStoredVoxel = voxelFaces.getVoxel(position);
 						currentStoredVoxel.blockID = 1;
-						currentStoredVoxel.direction |= direction;
+						currentStoredVoxel.addDirection(direction);
 						voxelFaces.setVoxel(position, currentStoredVoxel);
 					}
 					
 					if ((copiedBitData >> itrCount) & 1) {
 						Voxel currentStoredVoxel = voxelFaces.getVoxel(position);
 						currentStoredVoxel.blockID = 1;
-						currentStoredVoxel.direction |= (direction << 1);
+						currentStoredVoxel.addDirection(direction << 1);
 						voxelFaces.setVoxel(position, currentStoredVoxel);
 					}
 				}
@@ -140,40 +179,40 @@ void Chunk::updateMesh() {
 	}
 
 	for (unsigned int direction = (int)Direction::NORTH; direction <= (int)Direction::DOWN; direction <<= 1) {
-		for (int depth = 1; depth < m_ChunkSize + 1; depth++) {
-			for (int y = 1; y < m_ChunkSize + 1; y++) {
-				for (int x = 1; x < m_ChunkSize + 1; x++) {
+		for (int depth = 0; depth < m_ChunkSize; depth++) {
+			for (int y = 0; y < m_ChunkSize; y++) {
+				for (int x = 0; x < m_ChunkSize; x++) {
 					glm::vec3 newPosition = getDirectionPosition(glm::vec3(x, y, depth), (Direction)direction);
 					Voxel currentVoxel = voxelFaces.getVoxel(newPosition);
-					if (!(currentVoxel.direction & direction)) continue;
+					if (!currentVoxel.hasDirection(direction)) continue;
 
-					currentVoxel.direction &= ~direction;
+					currentVoxel.removeDirection(direction);
 					voxelFaces.setVoxel(newPosition, currentVoxel);
 					SSBOMesh::Face face = SSBOMesh::Face(newPosition, glm::vec2(1, 1), (Direction)direction);
 
-					for (int dx = 1; dx < m_ChunkSize; dx++) {
+					for (int dx = 1; x + dx < m_ChunkSize; dx++) {
 						glm::vec3 nextPosition = getDirectionPosition(glm::vec3(x + dx, y, depth), (Direction)direction);
 						Voxel nextVoxel = voxelFaces.getVoxel(nextPosition);
 
-						if (!(nextVoxel.direction & direction)) break;
+						if (!nextVoxel.hasDirection(direction)) break;
 
-						nextVoxel.direction &= ~direction;
+						nextVoxel.removeDirection(direction);
 						voxelFaces.setVoxel(nextPosition, nextVoxel);
 						face.size.x++;
 					}
 
-					for (int dy = 1; dy < m_ChunkSize; dy++) {
+					for (int dy = 1; y + dy < m_ChunkSize; dy++) {
 						for (int dx = 0; dx < face.size.x; dx++) {
 							glm::vec3 nextPosition = getDirectionPosition(glm::vec3(x + dx, y + dy, depth), (Direction)direction);
 							Voxel nextVoxel = voxelFaces.getVoxel(nextPosition);
 
-							if (!(nextVoxel.direction & direction)) goto BREAK_GREEDY_MESHING;
+							if (!nextVoxel.hasDirection(direction)) goto BREAK_GREEDY_MESHING;
 						}
 
 						for (int dx = 0; dx < face.size.x; dx++) {
 							glm::vec3 nextPosition = getDirectionPosition(glm::vec3(x + dx, y + dy, depth), (Direction)direction);
 							Voxel nextVoxel = voxelFaces.getVoxel(nextPosition);
-							nextVoxel.direction &= ~direction;
+							nextVoxel.removeDirection(direction);
 							voxelFaces.setVoxel(nextPosition, nextVoxel);
 						}
 
@@ -189,7 +228,7 @@ void Chunk::updateMesh() {
 
 	// Avg meshing time - 2-5ms
 
-#if _DEBUG // Print meshing time.
+#if 1 // Print meshing time.
 	auto stopTime = std::chrono::high_resolution_clock::now();
 	std::chrono::duration<double, std::milli> ms_double = stopTime - startTime;
 	printf("Meshing chunk (%i, %i, %i) took %.3f ms.\n", m_Position.x, m_Position.y, m_Position.z, ms_double.count());

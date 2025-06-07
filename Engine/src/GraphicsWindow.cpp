@@ -1,7 +1,9 @@
 #include "GraphicsWindow.h"
 
-#include <assert.h>
+#include "ActionHandler.h"
+
 #include <iostream>
+
 
 GraphicsWindow::GraphicsWindow() {
 	// Failed to load glfw
@@ -70,5 +72,5 @@ glm::vec2 GraphicsWindow::getMousePosition() {
 }
 
 void GraphicsWindow::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-	if (action == GLFW_PRESS) Engine::Keybind::PerformAction(key);
+	if (action == GLFW_PRESS) Engine::ActionHandler::PerformAction(key);
 }

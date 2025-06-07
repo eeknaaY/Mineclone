@@ -1,19 +1,19 @@
-#include "Keybind.h"
+#include "ActionHandler.h"
 
 namespace Engine {
 
-	std::unordered_map<int, int> Keybind::m_KeyToActionMap;
-	std::unordered_map<int, std::function<void()>> Keybind::m_ActionToFunctionMap;
+	std::unordered_map<int, int> ActionHandler::m_KeyToActionMap;
+	std::unordered_map<int, std::function<void()>> ActionHandler::m_ActionToFunctionMap;
 
-	void Keybind::SetKeybind(int GLFW_KEY, int action) {
+	void ActionHandler::SetKeybind(int GLFW_KEY, int action) {
 		m_KeyToActionMap[GLFW_KEY] = action;
 	}
 
-	void Keybind::SetStartUpKeybinds() {
+	void ActionHandler::SetStartUpKeybinds() {
 		// TODO: Implement?
 	}
 
-	void Keybind::PerformAction(int GLFW_KEY) {
+	void ActionHandler::PerformAction(int GLFW_KEY) {
 		// Keybind has not been set.
 		if (!m_KeyToActionMap.count(GLFW_KEY)) return;
 
@@ -24,7 +24,7 @@ namespace Engine {
 		m_ActionToFunctionMap[action]();
 	}
 
-	void Keybind::SetAction(int action, std::function<void()> function) {
+	void ActionHandler::SetAction(int action, std::function<void()> function) {
 
 		m_ActionToFunctionMap[action] = function;
 	}

@@ -182,7 +182,7 @@
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\Engine.h" />
     <ClInclude Include="src\GraphicsWindow.h" />
-    <ClInclude Include="src\Keybind.h" />
+    <ClInclude Include="src\ActionHandler.h" />
     <ClInclude Include="src\Mesh.h" />
     <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\SSBOMesh.h" />
@@ -201,7 +201,7 @@
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsC</CompileAs>
     </ClCompile>
     <ClCompile Include="src\GraphicsWindow.cpp" />
-    <ClCompile Include="src\Keybind.cpp" />
+    <ClCompile Include="src\ActionHandler.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\SSBOMesh.cpp" />
   </ItemGroup>

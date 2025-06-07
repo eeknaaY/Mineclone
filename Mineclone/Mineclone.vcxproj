@@ -176,6 +176,7 @@
       </ForcedIncludeFiles>
     </ClCompile>
     <ClCompile Include="src\Chunk.cpp" />
+    <ClCompile Include="src\ChunkManager.cpp" />
     <ClCompile Include="src\Voxel.cpp" />
     <ClCompile Include="src\VoxelStorage.cpp" />
   </ItemGroup>
@@ -190,6 +191,7 @@
   <ItemGroup>
     <ClInclude Include="src\Block.h" />
     <ClInclude Include="src\Chunk.h" />
+    <ClInclude Include="src\ChunkManager.h" />
     <ClInclude Include="src\Voxel.h" />
     <ClInclude Include="src\VoxelStorage.h" />
   </ItemGroup>

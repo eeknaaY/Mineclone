@@ -1,13 +1,12 @@
 #pragma once
 
-#include "Keybind.h"
 #include <unordered_map>
 #include <functional>
 #include "GLFW/glfw3.h"
 
 namespace Engine {
 
-	class Keybind {
+	class ActionHandler {
 	public:
 		static void SetAction(int action, std::function<void()> function);
 		static void PerformAction(int GLFW_KEY);
